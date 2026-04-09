@@ -5,7 +5,7 @@
 const unsigned int WIDTH = 560;
 const unsigned int HEIGHT = 690;
 
-typedef enum { none, easy, mid, hard } difficulties;
+typedef enum { easy, mid, hard, none } difficulties;
 
 class DifficultyBtn : public sf::RectangleShape {
 private:
@@ -24,8 +24,8 @@ public:
 	}
 
 
-	DifficultyBtn(std::string text, sf::Font& font, float yPos)			// get an error saying, no default constructor for the sf::Text class, this is because, you have to pass in the font to the text class as soon as the constructor is called.
-		: content(font, text, 22) {					// you can pass in the text string as well as the size of characters while initialising sf::Text
+	DifficultyBtn(std::string text, sf::Font &font, float yPos)			// get an error saying, no default constructor for the sf::Text class, this is because, you have to pass in the font to the text class as soon as the constructor is called.
+		: content(font, text, 22){					// you can pass in the text string as well as the size of characters while initialising sf::Text
 
 		this->setSize(sf::Vector2f(BTN_WIDTH, BTN_HEIGHT));
 		this->setOrigin(this->getGeometricCenter());
@@ -44,7 +44,7 @@ public:
 
 
 
-void setting_btn_clicked(int x, int y, DifficultyBtn& easy, DifficultyBtn& mid, DifficultyBtn& hard, difficulties& difficulty_setting);
+void setting_btn_clicked(int x, int y, DifficultyBtn &easy, DifficultyBtn &mid, DifficultyBtn &hard, difficulties &difficulty_setting);
 
 void main_game(sf::RenderWindow& window, sf::Font& font, difficulties difficulty_setting);
 
@@ -59,7 +59,7 @@ int main() {
 	}
 
 	sf::Text heading(font, "MINESWEEPER", 44);
-	heading.setPosition({ WIDTH / 2.0f - (44 * 11 / 2), 100 });
+	heading.setPosition({ WIDTH / 2.0f - (44*11/2), 100});
 
 
 	sf::Text newthings(font, "guess who's back", 44);
@@ -72,7 +72,7 @@ int main() {
 	DifficultyBtn hardBtn("HARD", font, 600.0f);
 	DifficultyBtn midBtn("MID", font, 450.0f);
 	DifficultyBtn easyBtn("EASY", font, 300.0f);
-
+	
 
 	while (window.isOpen()) {
 		while (std::optional event = window.pollEvent()) {
@@ -81,7 +81,7 @@ int main() {
 			}
 
 			else if (auto* keypressed = event->getIf<sf::Event::KeyPressed>()) {
-				if (keypressed->scancode == sf::Keyboard::Scancode::Escape) {
+				if (keypressed->scancode == sf::Keyboard::Scancode::Escape){
 					window.close();
 				}
 			}
@@ -118,12 +118,10 @@ int main() {
 		}
 
 		else {
-			// draw the game grid window
-			//window.draw(newthings);
 
 			main_game(window, font, difficulty_setting);
 		}
-
+		
 		window.display();
 
 	}
@@ -132,22 +130,19 @@ int main() {
 }
 
 
-void setting_btn_clicked(int x, int y, DifficultyBtn& easy, DifficultyBtn& mid, DifficultyBtn& hard, difficulties& difficulty_setting) {
+void setting_btn_clicked(int x, int y, DifficultyBtn &easy, DifficultyBtn &mid, DifficultyBtn &hard, difficulties &difficulty_setting) {
 
 	sf::Vector2f mousePos((float)x, (float)y);
 
 	if (easy.getGlobalBounds().contains(mousePos)) {
-		//std::cout << "easy was clicked" << std::endl;
 		difficulty_setting = difficulties::easy;
 		// start game in easy mode
 	}
 	else if (mid.getGlobalBounds().contains(mousePos)) {
-		//std::cout << "mid was clicked" << std::endl;
 		difficulty_setting = difficulties::mid;
 		// start game in medium mode
 	}
 	else if (hard.getGlobalBounds().contains(mousePos)) {
-		//std::cout << "hard was clicked" << std::endl;
 		difficulty_setting = difficulties::hard;
 		// start game in hard mode
 	}
@@ -155,16 +150,18 @@ void setting_btn_clicked(int x, int y, DifficultyBtn& easy, DifficultyBtn& mid, 
 
 
 void main_game(sf::RenderWindow& window, sf::Font& font, difficulties difficulty_setting) {
-	int box_size[3] = { 44, 28, 22 };
+	int box_size[3] = { 65, 52, 42 };
 	int grid_size[3] = { 8, 10, 12 };
 	int num_bombs[3] = { 6, 11, 15 };
-	int offset[3] = { 2, 4, 5 };
+	int padding[3] = { 3, 3, 3 };
+	int offset_x[3] = {7, 4, 9};
+	int offset_y[3] = {126, 120, 136};
 
-	for (int i = 1; i <= grid_size[difficulty_setting - 1]; i++) {
-		for (int j = 1; j <= grid_size[difficulty_setting - 1]; j++) {
-			sf::RectangleShape rect(sf::Vector2f(box_size[difficulty_setting - 1], box_size[difficulty_setting - 1]));
-			rect.setPosition({ (float)box_size[difficulty_setting - 1] * (i - 1) + offset[difficulty_setting - 1] * i,
-							   (float)box_size[difficulty_setting - 1] * (j - 1) + offset[difficulty_setting - 1] * j });
+	for (int i = 1; i <= grid_size[difficulty_setting]; i++) {
+		for (int j = 1; j <= grid_size[difficulty_setting]; j++) {
+			sf::RectangleShape rect(sf::Vector2f(box_size[difficulty_setting], box_size[difficulty_setting]));
+			rect.setPosition({ (float)box_size[difficulty_setting] * (i - 1) + padding[difficulty_setting] * i + offset_x[difficulty_setting],
+							   (float)box_size[difficulty_setting] * (j - 1) + padding[difficulty_setting] * j + offset_y[difficulty_setting]});
 			window.draw(rect);
 		}
 	}
